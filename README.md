@@ -13,7 +13,7 @@ A containerized version of BioM3, a multi-stage protein design pipeline that gen
 ### Pull the Container
 
 ```bash
-docker pull YOUR_DOCKERHUB_USERNAME/biom3-container:latest
+docker pull tnnandi/biom3-container:latest
 ```
 
 ### Prepare Your Files
@@ -137,7 +137,9 @@ docker images | grep biom3-container
 - **Output**: Local directory for saving results
 - **Hardware**: CPU or GPU (GPU recommended for faster processing)
 
-## Support
+## NOTE: The structure prediction module is being fixed
+
+<!-- ## Support
 
 For issues with the BioM3 pipeline itself, please refer to the original BioM3 repository. For container-specific issues, please check the troubleshooting section above.
 ```
@@ -164,4 +166,4 @@ This creates a comprehensive README that covers:
 - ✅ Troubleshooting guide
 - ✅ Clear input/output format
 
-The README is user-friendly and covers all the essential information someone would need to use your containerized BioM3 pipeline! 
+The README is user-friendly and covers all the essential information someone would need to use your containerized BioM3 pipeline!  -->
