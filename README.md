@@ -1,6 +1,6 @@
 # BioM3 Container
 
-A containerized version of BioM3, a multi-stage protein design pipeline that generates protein sequences from text descriptions and predicts their structures.
+A containerized version of BioM3 (https://huggingface.co/niksapraljak1/BioM3), a multi-stage protein design pipeline that generates protein sequences from text descriptions (and optionally predicts their structures using third party tools like esmfold).
 
 ## Quick Start
 
@@ -21,15 +21,32 @@ docker pull tnnandi/biom3-container:latest
 1. **Create input directory and add your prompts:**
    ```bash
    mkdir -p input
-   echo "PROTEIN NAME: Translation initiation factor IF-1. FUNCTION: One of the essential components for the initiation of protein synthesis..." > input/prompts.txt
+   touch input/prompts.txt
    ```
+   Enter your prompt (example available below) in prompts.txt
 
 2. **Create output directory:**
    ```bash
    mkdir -p output
    ```
 
-3. **Download model weights** (contact the authors for access to the weights directory)
+3. **Download model weights**
+Before running models, you need to download the pre-trained weights. We provide comprehensive download instructions in a separate file to keep this README clean and focused.
+
+**Quick start:**
+```bash
+# Install gdown for downloading
+pip install gdown
+
+# Download all weights at once
+wget https://raw.githubusercontent.com/your-repo/BioM3/main/download_weights.sh
+chmod +x download_weights.sh
+./download_weights.sh
+```
+
+For detailed instructions, troubleshooting, and individual component downloads, see [DOWNLOAD_WEIGHTS.md](DOWNLOAD_WEIGHTS.md).
+
+
 
 ### Run the Container
 
@@ -59,13 +76,10 @@ PROTEIN NAME: Translation initiation factor IF-1. FUNCTION: One of the essential
 
 After running, you'll find the following files in your local `output/` directory:
 
-### Intermediate Results
-- `stage1_embeddings.json`: Text and protein embeddings from Stage 1
-- `stage2_embeddings.json`: Facilitated embeddings from Stage 2  
+- `stage1_embeddings.json` (ignore)
+- `stage2_embeddings.json` (ignore)  
 - `stage3_sequences.json`: Generated protein sequences from Stage 3
 - `pipeline_summary.txt`: Summary of the pipeline execution
-
-### Structure Files
 - `structures_XXXX/`: Directory containing PDB structure files for each prompt
   - `structure_1.pdb`, `structure_2.pdb`, etc.: Predicted protein structures
   - `sequence_1.fasta`, `sequence_2.fasta`, etc.: Generated protein sequences
@@ -79,7 +93,7 @@ docker run \
   -v $(pwd)/input:/app/input \
   -v $(pwd)/output:/app/output \
   -v $(pwd)/weights:/app/weights \
-  YOUR_DOCKERHUB_USERNAME/biom3-container:latest
+  tnnandi/biom3-container:latest
 ```
 
 ### For Apple Silicon (M1/M2) MacBooks
@@ -89,7 +103,7 @@ docker run --platform linux/amd64 \
   -v $(pwd)/input:/app/input \
   -v $(pwd)/output:/app/output \
   -v $(pwd)/weights:/app/weights \
-  YOUR_DOCKERHUB_USERNAME/biom3-container:latest
+  tnnandi/biom3-container:latest
 ```
 
 ## Troubleshooting
