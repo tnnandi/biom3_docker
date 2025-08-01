@@ -13,7 +13,7 @@ A containerized version of BioM3 (https://huggingface.co/niksapraljak1/BioM3), a
 ### Pull the Container
 
 ```bash
-docker pull tnnandi/biom3-container:latest
+docker pull tnnandi/biom3-container:v1.0
 ```
 
 ### Prepare Your Files
@@ -37,9 +37,12 @@ Before running models, you need to download the pre-trained weights. We provide 
 ```bash
 # Install gdown for downloading
 pip install gdown
+# Install wget for downloading
+brew install wget
 
 # Download all weights at once
-wget https://raw.githubusercontent.com/your-repo/BioM3/main/download_weights.sh
+curl -O https://raw.githubusercontent.com/tnnandi/biom3_docker/master/download_weights.sh
+
 chmod +x download_weights.sh
 ./download_weights.sh
 ```
@@ -55,7 +58,7 @@ docker run \
   -v $(pwd)/input:/app/input \
   -v $(pwd)/output:/app/output \
   -v $(pwd)/weights:/app/weights \
-  YOUR_DOCKERHUB_USERNAME/biom3-container:latest
+  tnnandi/biom3-container:v1.0
 ```
 
 ### Command Arguments
@@ -79,24 +82,12 @@ After running, you'll find the following files in your local `output/` directory
 - `stage1_embeddings.json` (ignore)
 - `stage2_embeddings.json` (ignore)  
 - `stage3_sequences.json`: Generated protein sequences from Stage 3
-- `pipeline_summary.txt`: Summary of the pipeline execution
 - `structures_XXXX/`: Directory containing PDB structure files for each prompt
   - `structure_1.pdb`, `structure_2.pdb`, etc.: Predicted protein structures
   - `sequence_1.fasta`, `sequence_2.fasta`, etc.: Generated protein sequences
 
 ## MacBook Specific Instructions
 
-### For Intel MacBooks
-```bash
-# Standard Docker commands work as shown above
-docker run \
-  -v $(pwd)/input:/app/input \
-  -v $(pwd)/output:/app/output \
-  -v $(pwd)/weights:/app/weights \
-  tnnandi/biom3-container:latest
-```
-
-### For Apple Silicon (M1/M2) MacBooks
 ```bash
 # Add platform specification for compatibility
 docker run --platform linux/amd64 \
@@ -107,7 +98,7 @@ docker run --platform linux/amd64 \
 ```
 
 ## Troubleshooting
-
+curl -O https://raw.githubusercontent.com/tnnandi/BioM3/main/download_weights.sh
 ### Common Issues
 
 1. **"No such file or directory" errors**
@@ -153,31 +144,3 @@ docker images | grep biom3-container
 
 ## NOTE: The structure prediction module is being fixed
 
-<!-- ## Support
-
-For issues with the BioM3 pipeline itself, please refer to the original BioM3 repository. For container-specific issues, please check the troubleshooting section above.
-```
-
-## **3. Update the README with your actual DockerHub username**
-
-After you push to DockerHub, replace `YOUR_DOCKERHUB_USERNAME` in the README with your actual username.
-
-## **4. Optional: Add version tags**
-
-```bash
-# Tag with version number
-docker tag biom3-container YOUR_DOCKERHUB_USERNAME/biom3-container:v1.0.0
-
-# Push version tag
-docker push YOUR_DOCKERHUB_USERNAME/biom3-container:v1.0.0
-```
-
-This creates a comprehensive README that covers:
-- ✅ How to pull the container
-- ✅ How to run with arguments
-- ✅ Where files are saved
-- ✅ MacBook-specific instructions
-- ✅ Troubleshooting guide
-- ✅ Clear input/output format
-
-The README is user-friendly and covers all the essential information someone would need to use your containerized BioM3 pipeline!  -->
