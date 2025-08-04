@@ -10,7 +10,7 @@ This guide will help you set up and run [BioM3](https://huggingface.co/niksapral
   - Download from: https://www.docker.com/products/docker-desktop/
   - For MacBook: Choose the appropriate version (Intel chip or Apple chip)
 
-### 2. One-Command Setup
+<!-- ### 2. One-Command Setup
 
 Run the setup script to automatically:
 - Pull the BioM3 Docker container
@@ -53,19 +53,29 @@ chmod +x run_biom3.sh
 
 # Show help for all options
 ./run_biom3.sh --help
-```
+``` -->
 
-## 3b. Run BioM3 (Option 2: Using GUI (Recommended))
+## Run BioM3 using GUI
 
-For a user-friendly GUI experience:
+A user-friendly GUI will:
+- Pull the BioM3 Docker container
+- Download all required model weights (~5.5GB total)
+- Create necessary directories
+- Set up an example prompt file
+
+NOTE: The downloading of the container and the weights will be done only ONCE.
 
 ```bash
+# Download the file to download weights
+curl -fLO https://raw.githubusercontent.com/tnnandi/biom3_docker/master/download_weights.sh
 # Download the GUI launcher
-curl -O https://raw.githubusercontent.com/tnnandi/biom3/master/run_gui.sh
-curl -O https://raw.githubusercontent.com/tnnandi/biom3/master/biom3_gui.py
+curl -fLO https://raw.githubusercontent.com/tnnandi/biom3_docker/master/run_gui.sh
+# Download the core biom3 pipeline
+curl -fLO https://raw.githubusercontent.com/tnnandi/biom3_docker/master/biom3_gui.py
 
-# Make it executable
-chmod +x run_gui.sh
+
+# Make the files executable
+chmod +x run_gui.sh download_weights.sh biom3_gui.py
 
 # Launch the GUI
 ./run_gui.sh
@@ -78,7 +88,7 @@ The GUI provides:
 - **Results Tab**: View generated sequences and open output folder
 
 
-## Manual Setup (Alternative)
+<!-- ## Manual Setup (Alternative)
 
 If you prefer to set up manually:
 
@@ -132,7 +142,7 @@ Create a `prompts.txt` file in your `input/` directory with one protein descript
 
 ```
 PROTEIN NAME: [Protein Name]. FUNCTION: [Detailed description of protein function, structure, and properties].
-```
+``` -->
 
 ### Example Prompts
 
