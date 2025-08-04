@@ -118,7 +118,7 @@ class BioM3GUI:
         ttk.Label(params_frame, text="Diffusion Steps:").grid(row=0, column=0, sticky=tk.W, pady=5)
         diffusion_spin = ttk.Spinbox(params_frame, from_=100, to=2000, textvariable=self.diffusion_steps, width=10)
         diffusion_spin.grid(row=0, column=1, padx=5, pady=5)
-        ttk.Label(params_frame, text="(Number of diffusion steps for sequence generation, default: 1024)").grid(row=0, column=2, sticky=tk.W, pady=5)
+        ttk.Label(params_frame, text="(Number of diffusion steps for sequence generation, default: 256)").grid(row=0, column=2, sticky=tk.W, pady=5)
         
         # Number of replicas
         ttk.Label(params_frame, text="Number of Replicas:").grid(row=1, column=0, sticky=tk.W, pady=5)
