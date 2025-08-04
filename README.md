@@ -76,7 +76,7 @@ The GUI provides:
 - **Configuration Tab**: Set diffusion steps and number of replicas
 - **Run Tab**: Enter protein descriptions and run the pipeline
 - **Results Tab**: View generated sequences and open output folder
-```
+
 
 ## Manual Setup (Alternative)
 
