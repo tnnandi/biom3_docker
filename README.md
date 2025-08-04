@@ -29,7 +29,7 @@ chmod +x setup_biom3.sh
 ./setup_biom3.sh
 ```
 
-### 3. Run BioM3 (Option 1: using command line)
+### 3a. Run BioM3 (Option 1: using command line)
 
 After setup is complete, run BioM3 with:
 
@@ -55,7 +55,7 @@ chmod +x run_biom3.sh
 ./run_biom3.sh --help
 ```
 
-## Run BioM3 (Option 2: Using GUI (Recommended))
+## 3b. Run BioM3 (Option 2: Using GUI (Recommended))
 
 For a user-friendly GUI experience:
 
