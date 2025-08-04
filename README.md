@@ -63,7 +63,7 @@ A user-friendly GUI will:
 - Create necessary directories
 - Set up an example prompt file
 
-NOTE: The downloading of the container and the weights will be done only ONCE.
+NOTE: The downloading of the container and the weights may take a few minutes, but will be done only ONCE.
 
 ```bash
 # Download the file to download weights
@@ -78,6 +78,10 @@ curl -fLO https://raw.githubusercontent.com/tnnandi/biom3_docker/master/biom3_gu
 chmod +x run_gui.sh download_weights.sh biom3_gui.py
 
 # Launch the GUI
+./run_gui.sh
+```
+The above steps need to be carried out only ONCE. Next time onwards, simply launch the GUI using
+```bash
 ./run_gui.sh
 ```
 
