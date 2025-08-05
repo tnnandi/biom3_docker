@@ -80,6 +80,8 @@ chmod +x run_gui.sh download_weights.sh biom3_gui.py
 # Launch the GUI
 ./run_gui.sh
 ```
+NOTE: Click "refresh status" [in the "setup" tab] after downloading the container and the weights through the GUI for the app to be aware of the downloads. Otherwise, you might encounter an error when trying to run the BioM3 pipeline.
+
 The above steps need to be carried out only ONCE. Next time onwards, simply launch the GUI using
 ```bash
 ./run_gui.sh
