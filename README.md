@@ -163,11 +163,11 @@ After running, you'll find the following files in your `output/` directory:
 - `stage1_embeddings.json` - Text and protein embeddings from Stage 1
 - `stage2_embeddings.json` - Facilitated embeddings from Stage 2  
 - `stage3_sequences.json` - Generated protein sequences from Stage 3
-- `structures_XXXX/` - Directory containing PDB structure files for each prompt
+- (NOT available yet)`structures_XXXX/` - Directory containing PDB structure files for each prompt
   - `structure_1.pdb`, `structure_2.pdb`, etc. - Predicted protein structures
   - `sequence_1.fasta`, `sequence_2.fasta`, etc. - Generated protein sequences
 
-## Environment Variables
+<!-- ## Environment Variables
 
 You can customize the pipeline by setting environment variables:
 
@@ -273,7 +273,7 @@ The pipeline shows progress for each stage:
 For issues and questions:
 - Check the troubleshooting section above
 - Review the logs in the output directory
-- Open an issue on the GitHub repository
+- Open an issue on the GitHub repository -->
 
 ## File Structure
 
