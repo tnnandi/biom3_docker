@@ -84,6 +84,16 @@ class BioM3GUI:
                                                command=self.download_container)
         self.download_container_btn.pack(pady=5)
         
+        # Add refresh button
+        self.refresh_status_btn = ttk.Button(docker_frame, text="Refresh Status", 
+                                           command=self.check_setup_status)
+        self.refresh_status_btn.pack(pady=5)
+        
+        # Add debug button (commented out)
+        # self.debug_btn = ttk.Button(docker_frame, text="Debug Setup", 
+        #                            command=self.debug_setup_status)
+        # self.debug_btn.pack(pady=5)
+        
         # Weights section
         weights_frame = ttk.LabelFrame(self.setup_frame, text="Model Weights", padding=10)
         weights_frame.pack(fill=tk.X, padx=10, pady=5)
