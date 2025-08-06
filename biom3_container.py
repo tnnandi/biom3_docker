@@ -13,6 +13,7 @@ import numpy as np
 from argparse import Namespace
 
 # Add BioM3 to Python path
+sys.path.insert(0, '/app')
 sys.path.insert(0, '/app/BioM3')
 
 # Fix to resolve the weights loading issue with PyTorch 2.6
@@ -56,17 +57,17 @@ class BioM3Container:
     def load_configs(self):
         """Load configuration files for all stages"""
         # Stage 1 config
-        with open('/app/BioM3/stage1_config.json', 'r') as f:
+        with open('/app/stage1_config.json', 'r') as f:
             stage1_config_dict = json.load(f)
         self.stage1_config = self.convert_to_namespace(stage1_config_dict)
         
         # Stage 2 config
-        with open('/app/BioM3/stage2_config.json', 'r') as f:
+        with open('/app/stage2_config.json', 'r') as f:
             stage2_config_dict = json.load(f)
         self.stage2_config = self.convert_to_namespace(stage2_config_dict)
         
         # Stage 3 config
-        with open('/app/BioM3/stage3_config.json', 'r') as f:
+        with open('/app/stage3_config.json', 'r') as f:
             stage3_config_dict = json.load(f)
         self.stage3_config = self.convert_to_namespace(stage3_config_dict)
         
