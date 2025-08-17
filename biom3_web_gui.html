@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BioM3 - Protein Design Pipeline</title>
+    <title>BioM3 - AI-driven Protein Design Pipeline</title>
+    <script src="https://unpkg.com/ngl@0.10.4/dist/ngl.js"></script>
     <style>
         * {
             margin: 0;
@@ -12,10 +13,11 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f5f7 0%, #ffffff 100%);
+            min-height: 800px;
+            color: #1d1d1f;
+            line-height: 1.5;
         }
 
         .container {
@@ -30,45 +32,31 @@
             background: rgba(255, 255, 255, 0.95);
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
             backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .logo {
             font-size: 3.5rem;
-            font-weight: 900;
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            font-weight: 800;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #007AFF 0%, #5856D6 50%, #FF2D92 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            text-shadow: none;
+            letter-spacing: -0.03em;
+            line-height: 1;
+            font-feature-settings: "liga" 1, "kern" 1;
         }
 
         .subtitle {
             font-size: 1.2rem;
-            color: #666;
+            color: #86868b;
             margin-bottom: 20px;
-        }
-
-        .status-indicator {
-            display: inline-block;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .status-healthy {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .status-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            font-weight: 400;
         }
 
         .main-content {
@@ -76,22 +64,28 @@
             grid-template-columns: 1fr 1fr;
             gap: 30px;
             margin-bottom: 30px;
+            min-width: 0;
         }
 
         .card {
             background: rgba(255, 255, 255, 0.95);
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
             backdrop-filter: blur(10px);
+            min-width: 0;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .card h2 {
-            color: #333;
+            color: #1d1d1f;
             margin-bottom: 20px;
             font-size: 1.5rem;
-            border-bottom: 2px solid #667eea;
+            border-bottom: 2px solid #007AFF;
             padding-bottom: 10px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
         }
 
         .form-group {
@@ -101,8 +95,9 @@
         .form-group label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 600;
-            color: #555;
+            font-weight: 500;
+            color: #1d1d1f;
+            font-size: 0.95rem;
         }
 
         .form-group input,
@@ -110,18 +105,21 @@
         .form-group select {
             width: 100%;
             padding: 12px;
-            border: 2px solid #e1e5e9;
+            border: 1px solid #d2d2d7;
             border-radius: 8px;
             font-size: 1rem;
-            transition: border-color 0.3s ease;
+            transition: all 0.3s ease;
+            background: #ffffff;
+            color: #1d1d1f;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
         }
 
         .form-group input:focus,
         .form-group textarea:focus,
         .form-group select:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #007AFF;
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
         }
 
         .form-row {
@@ -131,22 +129,47 @@
         }
 
         .btn {
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: linear-gradient(45deg, #007AFF, #5856D6);
             color: white;
             border: none;
             padding: 12px 24px;
             border-radius: 8px;
             font-size: 1rem;
-            font-weight: 600;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            text-transform: none;
+            letter-spacing: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
         }
 
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(0, 122, 255, 0.25);
+        }
+        
+        .stop-btn {
+            background: linear-gradient(45deg, #FF3B30, #FF453A) !important;
+        }
+        
+        .stop-btn:hover {
+            box-shadow: 0 8px 25px rgba(255, 59, 48, 0.25) !important;
+        }
+        
+        .print-btn {
+            background: linear-gradient(45deg, #34C759, #30D158) !important;
+        }
+        
+        .print-btn:hover {
+            box-shadow: 0 8px 25px rgba(52, 199, 89, 0.25) !important;
+        }
+        
+        .print-options {
+            display: inline-block;
+        }
+        
+        .print-options .btn {
+            margin-right: 10px;
         }
 
         .btn:disabled {
@@ -156,11 +179,11 @@
         }
 
         .btn-secondary {
-            background: linear-gradient(45deg, #6c757d, #495057);
+            background: linear-gradient(45deg, #8E8E93, #636366);
         }
 
         .btn-secondary:hover {
-            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3);
+            box-shadow: 0 8px 25px rgba(142, 142, 147, 0.25);
         }
 
         .results-card {
@@ -168,15 +191,16 @@
         }
 
         .results-content {
-            background: #f8f9fa;
+            background: #f5f5f7;
             border-radius: 8px;
             padding: 20px;
             margin-top: 20px;
             max-height: 400px;
             overflow-y: auto;
-            font-family: 'Courier New', monospace;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
             font-size: 0.9rem;
             white-space: pre-wrap;
+            color: #1d1d1f;
         }
 
         .loading {
@@ -188,17 +212,17 @@
         .progress-section {
             margin: 20px 0;
             padding: 15px;
-            background: #f8f9fa;
+            background: #f5f5f7;
             border-radius: 8px;
-            border: 1px solid #e9ecef;
+            border: 1px solid #d2d2d7;
         }
 
         .progress-log {
-            background: #2c3e50;
-            color: #ecf0f1;
+            background: #1d1d1f;
+            color: #f5f5f7;
             padding: 15px;
             border-radius: 5px;
-            font-family: 'Courier New', monospace;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
             font-size: 12px;
             max-height: 300px;
             overflow-y: auto;
@@ -207,25 +231,33 @@
         }
 
         .progress-log .stage {
-            color: #3498db;
+            color: #007AFF;
             font-weight: bold;
         }
 
         .progress-log .success {
-            color: #27ae60;
+            color: #34C759;
         }
 
         .progress-log .error {
-            color: #e74c3c;
+            color: #FF3B30;
         }
 
         .progress-log .info {
-            color: #f39c12;
+            color: #FF9500;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            background-color: #f5f5f7;
+            border-radius: 10px;
+            margin: 10px 0;
+            overflow: hidden;
         }
 
         .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
+            border: 4px solid #f5f5f7;
+            border-top: 4px solid #007AFF;
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -246,26 +278,28 @@
         }
 
         .preset-btn {
-            background: #e9ecef;
-            color: #495057;
-            border: 1px solid #dee2e6;
+            background: #f5f5f7;
+            color: #1d1d1f;
+            border: 1px solid #d2d2d7;
             padding: 8px 16px;
             border-radius: 6px;
             font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+            font-weight: 400;
         }
 
         .preset-btn:hover {
-            background: #667eea;
+            background: #007AFF;
             color: white;
-            border-color: #667eea;
+            border-color: #007AFF;
         }
 
         .preset-btn.active {
-            background: #667eea;
+            background: #007AFF;
             color: white;
-            border-color: #667eea;
+            border-color: #007AFF;
         }
 
         .example-prompts {
@@ -273,39 +307,88 @@
         }
 
         .example-btn {
-            background: #f8f9fa;
-            color: #495057;
-            border: 1px solid #dee2e6;
+            background: #f5f5f7;
+            color: #1d1d1f;
+            border: 1px solid #d2d2d7;
             padding: 8px 12px;
             border-radius: 6px;
             font-size: 0.8rem;
             cursor: pointer;
             margin: 5px;
             transition: all 0.3s ease;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+            font-weight: 400;
         }
 
         .example-btn:hover {
-            background: #667eea;
+            background: #007AFF;
             color: white;
-            border-color: #667eea;
+            border-color: #007AFF;
         }
 
         .error {
-            background: #f8d7da;
-            color: #721c24;
+            background: #FFE5E5;
+            color: #D70015;
             padding: 12px;
             border-radius: 8px;
             margin: 10px 0;
-            border: 1px solid #f5c6cb;
+            border: 1px solid #FFB3B3;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
         }
 
         .success {
-            background: #d4edda;
-            color: #155724;
+            background: #E5F9E5;
+            color: #248A3D;
             padding: 12px;
             border-radius: 8px;
             margin: 10px 0;
-            border: 1px solid #c3e6cb;
+            border: 1px solid #B3E5B3;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .real-time-logs {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f5f5f7;
+            border-radius: 8px;
+            border: 1px solid #d2d2d7;
+        }
+
+        .logs-container {
+            max-height: 300px;
+            overflow-y: auto;
+            background: #ffffff;
+            border: 1px solid #d2d2d7;
+            border-radius: 6px;
+            padding: 10px;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-radius: 4px;
+        }
+
+        .log-info {
+            color: #007AFF;
+        }
+
+        .log-success {
+            color: #34C759;
+            font-weight: bold;
+        }
+
+        .log-error {
+            color: #FF3B30;
+            font-weight: bold;
+        }
+
+        .log-warning {
+            color: #FF9500;
+            font-weight: bold;
         }
 
         @media (max-width: 768px) {
@@ -321,14 +404,51 @@
                 font-size: 2.5rem;
             }
         }
+        
+        /* Structure viewer styles */
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            border-radius: 6px;
+        }
+        
+        #structureViewer {
+            background: #f5f5f7;
+            border: 1px solid #d2d2d7;
+            border-radius: 8px;
+            overflow: hidden;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            flex-shrink: 1;
+        }
+        
+        #structureSelector {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #d2d2d7;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        #structureInfo p {
+            margin: 5px 0;
+            font-size: 0.9rem;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        #structureInfo strong {
+            color: #007AFF;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <div class="logo">BioM3</div>
-            <div class="subtitle">Protein Design Pipeline</div>
-            <div class="status-indicator" id="statusIndicator">Checking service status...</div>
+            <div class="subtitle"><strong>Bio</strong>logical <strong>M</strong>ulti-<strong>M</strong>odal <strong>M</strong>odel</div>
+            <div class="subtitle">An AI-driven framework for designing functional proteins via natural language prompts</div>
         </div>
 
         <div class="main-content">
@@ -336,18 +456,28 @@
                 <h2>Configuration</h2>
                 
                 <div class="form-group">
-                    <label for="prompt">Protein Description:</label>
-                    <textarea id="prompt" rows="6" placeholder="Enter a detailed description of the protein you want to design...&#10;&#10;Example:&#10;PROTEIN NAME: Green fluorescent protein.&#10;FUNCTION: Fluorescent protein that emits green light when excited by blue or ultraviolet light. Widely used as a reporter gene in molecular biology and biotechnology applications."></textarea>
+                    <label for="prompt">Protein description prompt:</label>
+                    <textarea id="prompt" rows="6" placeholder="Enter a detailed description of the protein you want to design. Use either one of the example prompts below or provide your own description.&#10;&#10;Example:&#10;PROTEIN NAME: SH3 domain. SH3 PARALOG NAME: SHO1. PARALOG FUNCTION: Transmembrane osmosensor for filamentous growth and HOG pathways; involved in activation of the Cdc42p- and MAP kinase-dependent filamentous growth pathway and the high-osmolarity glycerol (HOG) response pathway; phosphorylated by Hog1p; interacts with Pbs2p, Msb2p, Hkr1p, and Ste11p.."></textarea>
+                </div>
+
+                <div class="example-prompts">
+                    <label>Example Prompts (click one to load protein description prompt):</label><br>
+                    <button class="example-btn" onclick="loadExample(0)">SH3 Domain</button>
+                    <button class="example-btn" onclick="loadExample(1)">Translation Factor</button>
+                    <button class="example-btn" onclick="loadExample(2)">Green Fluorescent Protein</button>
+                    <button class="example-btn" onclick="loadExample(3)">Insulin</button>
+                    <button class="example-btn" onclick="loadExample(4)">Hemoglobin</button>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="diffusionSteps">Diffusion Steps:</label>
-                        <input type="number" id="diffusionSteps" value="512" min="1" max="1024">
+                        <input type="number" id="diffusionSteps" value="512" min="128" max="1024" step="128">
+                        <small style="color: #666; font-size: 0.8rem; display: block; margin-top: 5px;">Must be a multiple of 128 (128, 256, 384, 512, 640, 768, 896, 1024)</small>
                     </div>
                     <div class="form-group">
                         <label for="numReplicas">Number of Replicas:</label>
-                        <input type="number" id="numReplicas" value="3" min="1" max="10">
+                        <input type="number" id="numReplicas" value="1" min="1" max="10">
                     </div>
                 </div>
 
@@ -357,40 +487,64 @@
                     <button class="preset-btn" onclick="setPreset(1024, 5)">High Quality</button>
                 </div>
 
-                <div class="example-prompts">
-                    <label>Example Prompts:</label><br>
-                    <button class="example-btn" onclick="loadExample(1)">Translation Factor</button>
-                    <button class="example-btn" onclick="loadExample(2)">Green Fluorescent Protein</button>
-                    <button class="example-btn" onclick="loadExample(3)">Insulin</button>
-                    <button class="example-btn" onclick="loadExample(4)">Hemoglobin</button>
-                </div>
-
                 <button class="btn" onclick="runPrediction()" id="runBtn">Generate Protein</button>
+            <button class="btn stop-btn" onclick="stopPrediction()" id="stopBtn" style="display: none; background-color: #dc3545;">⏹️ Stop Generation</button>
+            
+            <div class="notes-section" style="margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 8px; border-left: 4px solid #3498db;">
+                <h4 style="margin: 0 0 10px 0; color: #2c3e50; font-size: 14px;">Notes:</h4>
+                <ol style="margin: 0; padding-left: 20px; font-size: 13px; color: #555;">
+                    <li><strong>Sequence Length Limitation:</strong> The structure prediction module currently cannot handle sequences longer than 400 amino acids. It is recommended to limit the number of diffusion steps to no more than 768 to ensure structure prediction.</li>
+                    <li><strong>Development Status:</strong> This application is currently under active development and is not yet ready for public release. The current version is intended for feedback purposes only, focusing on features, platform compatibility, and browser support.</li>
+                </ol>
+            </div>
             </div>
 
             <div class="card">
-                <h2>Service Information</h2>
-                <div id="serviceInfo">
-                    <p><strong>Service URL:</strong> <span id="serviceUrl">Loading...</span></p>
-                    <p><strong>Status:</strong> <span id="serviceStatus">Checking...</span></p>
-                    <p><strong>Version:</strong> BioM3 Cloud Run v1.0</p>
+                <h2>Structure Visualization</h2>
+                <div id="structureControls">
+                    <div class="form-group">
+                        <label for="structureSelector">Select Structure:</label>
+                        <select id="structureSelector" onchange="loadStructure()">
+                            <option value="">No structures available</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Viewing Options:</label>
+                        <div class="button-group">
+                            <button class="btn btn-small" onclick="setViewMode('ribbon')">Ribbon</button>
+                            <button class="btn btn-small" onclick="setViewMode('surface')">Surface</button>
+                            <button class="btn btn-small" onclick="setViewMode('ballstick')">Ball & Stick</button>
+                            <button class="btn btn-small" onclick="setViewMode('plddt')">pLDDT Colors</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Structure Information:</label>
+                        <div id="structureInfo">
+                            <p><strong>Sequence:</strong> <span id="sequenceInfo">-</span></p>
+                            <p><strong>pLDDT Score:</strong> <span id="plddtScore">-</span></p>
+                            <p><strong>Quality:</strong> <span id="qualityInfo">-</span></p>
+                        </div>
+                    </div>
                 </div>
                 
-                <button class="btn btn-secondary" onclick="checkHealth()">Check Health</button>
-                <button class="btn btn-secondary" onclick="getServiceInfo()">Get Info</button>
+                <div id="structureViewer" style="height: 400px; border: 1px solid #ddd; border-radius: 8px; margin-top: 15px;">
+                    <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #666;">
+                        <p>Structures will appear here after generation</p>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div class="card results-card">
-            <h2>Results & Progress</h2>
+            <h2>Results & Logs</h2>
             <div class="loading" id="loading">
                 <div class="spinner"></div>
                 <p>Generating protein sequences...</p>
                 <p>This may take a few minutes depending on your settings.</p>
             </div>
-            <div id="progress" class="progress-section" style="display: none;">
-                <h3>BioM3 Progress</h3>
-                <div id="progressLog" class="progress-log"></div>
+            <div id="realTimeLogs" class="real-time-logs" style="display: none;">
+                <h3>🔄 Real-time Progress</h3>
+                <div id="logsContainer" class="logs-container"></div>
             </div>
             <div id="results"></div>
         </div>
@@ -412,13 +566,37 @@
         }
         
         const SERVICE_URL = getServiceUrl();
+        let isGenerating = false; // global variable to track if the generation is in progress
         
         // Initialize the page
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Service URL:', SERVICE_URL);
-            checkHealth();
-            getServiceInfo();
         });
+
+        // Real-time logging functions
+        function addLogEntry(message, type = 'info') {
+            const logsContainer = document.getElementById('logsContainer');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry log-${type}`;
+            
+            const timestamp = new Date().toLocaleTimeString();
+            logEntry.innerHTML = `[${timestamp}] ${message}`;
+            
+            logsContainer.appendChild(logEntry);
+            logsContainer.scrollTop = logsContainer.scrollHeight;
+        }
+
+        function showRealTimeLogs() {
+            document.getElementById('realTimeLogs').style.display = 'block';
+        }
+
+        function hideRealTimeLogs() {
+            document.getElementById('realTimeLogs').style.display = 'none';
+        }
+
+        function clearLogs() {
+            document.getElementById('logsContainer').innerHTML = '';
+        }
 
         function checkHealth() {
             console.log('Checking health at:', `${SERVICE_URL}/health`);
@@ -505,14 +683,49 @@
             progressLog.scrollTop = progressLog.scrollHeight;
         }
 
-        function showProgress() {
-            document.getElementById('progress').style.display = 'block';
-            document.getElementById('progressLog').innerHTML = '';
+        function startProgressStream() {
+            // Start Server-Sent Events for real-time progress
+            currentEventSource = new EventSource(`${SERVICE_URL}/progress`);
+            console.log('Progress stream started');
+            
+            currentEventSource.onmessage = function(event) {
+                try {
+                    const progressData = JSON.parse(event.data);
+                    console.log('Received progress:', progressData);
+                    
+                    // Add to real-time logs
+                    addLogEntry(progressData.message, 'info');
+                    
+                    // Close stream when complete
+                    if (progressData.progress >= 100) {
+                        currentEventSource.close();
+                        currentEventSource = null;
+                        addLogEntry('✅ Progress stream completed', 'success');
+                    }
+                } catch (error) {
+                    console.error('Error parsing progress data:', error);
+                    addLogEntry(`❌ Error parsing progress: ${error.message}`, 'error');
+                }
+            };
+            
+            currentEventSource.onerror = function(error) {
+                console.error('Progress stream error:', error);
+                // addLogEntry('❌ Progress stream error', 'error');
+                addLogEntry('🟡 Live progress temporarily unavailable, but your job is still running. Final results will appear when ready.', 'warning');
+                // currentEventSource.close();
+                // currentEventSource = null;
+
+                // retry connection
+                setTimeout(() => {
+                    if (isGenerating && !currentEventSource) {
+                        addLogEntry('🔄 Retrying progress stream...', 'info');
+                        startProgressStream();
+                    }
+                }, 5000);   
+            };
         }
 
-        function hideProgress() {
-            document.getElementById('progress').style.display = 'none';
-        }
+
 
         function setPreset(diffusionSteps, numReplicas) {
             document.getElementById('diffusionSteps').value = diffusionSteps;
@@ -525,6 +738,7 @@
 
         function loadExample(exampleNum) {
             const examples = {
+                0: "PROTEIN NAME: SH3 domain. SH3 PARALOG NAME: SHO1. PARALOG FUNCTION: Transmembrane osmosensor for filamentous growth and HOG pathways; involved in activation of the Cdc42p- and MAP kinase-dependent filamentous growth pathway and the high-osmolarity glycerol (HOG) response pathway; phosphorylated by Hog1p; interacts with Pbs2p, Msb2p, Hkr1p, and Ste11p.",
                 1: "PROTEIN NAME: Translation initiation factor IF-1. FUNCTION: One of the essential components for the initiation of protein synthesis. Binds in the vicinity of the A-site. Stabilizes the binding of IF-2 and IF-3 on the 30S subunit to which N-formylmethionyl-tRNA(fMet) subsequently binds. Helps modulate mRNA selection, yielding the 30S pre-initiation complex (PIC). Upon addition of the 50S ribosomal subunit, IF-1, IF-2 and IF-3 are released leaving the mature 70S translation initiation complex.",
                 2: "PROTEIN NAME: Green fluorescent protein. FUNCTION: Fluorescent protein that emits green light when excited by blue or ultraviolet light. Widely used as a reporter gene in molecular biology and biotechnology applications.",
                 3: "PROTEIN NAME: Insulin. FUNCTION: Hormone that regulates glucose metabolism. Promotes glucose uptake by cells and storage as glycogen in liver and muscle. Deficiency leads to diabetes mellitus.",
@@ -534,13 +748,18 @@
             document.getElementById('prompt').value = examples[exampleNum] || '';
         }
 
+        // Global variables for tracking the current request
+
+        
         function runPrediction() {
-            const prompt = document.getElementById('prompt').value.trim();
-            const diffusionSteps = parseInt(document.getElementById('diffusionSteps').value);
-            const numReplicas = parseInt(document.getElementById('numReplicas').value);
+            const prompt = document.getElementById('prompt').value.trim(); // get the prompt from the input field
+            const diffusionSteps = parseInt(document.getElementById('diffusionSteps').value); // get the diffusion steps from the dropdown
+            const numReplicas = parseInt(document.getElementById('numReplicas').value); // get the number of replicas from the dropdown
+
+            isGenerating = true; // set the isGenerating flag to true for the progress stream to work properly (this is used to check if the user has stopped the generation)
             
             if (!prompt) {
-                showError('Please enter a protein description.');
+                showError('Please enter a protein description.'); // show an error message if the prompt is empty
                 return;
             }
             
@@ -549,19 +768,26 @@
                 return;
             }
             
+            if (diffusionSteps % 128 !== 0) {
+                showError('Diffusion steps must be a multiple of 128 (e.g., 128, 256, 384, 512, 640, 768, 896, 1024).');
+                return;
+            }
+            
             if (numReplicas < 1 || numReplicas > 10) {
                 showError('Number of replicas must be between 1 and 10.');
                 return;
             }
             
-            // Show loading and progress
-            document.getElementById('loading').style.display = 'block';
+            // Show loading and real-time logs
+            document.getElementById('loading').style.display = 'block'; 
             document.getElementById('results').innerHTML = '';
             document.getElementById('runBtn').disabled = true;
-            showProgress();
-            addProgressLog('🚀 Starting BioM3 protein generation...', 'stage');
-            addProgressLog(`📝 Prompt: ${prompt.substring(0, 100)}${prompt.length > 100 ? '...' : ''}`, 'info');
-            addProgressLog(`⚙️ Config: ${diffusionSteps} diffusion steps, ${numReplicas} replicas`, 'info');
+            document.getElementById('stopBtn').style.display = 'inline-block';
+            clearLogs();
+            showRealTimeLogs();
+            addLogEntry('🚀 Starting BioM3 protein generation...', 'info');
+            addLogEntry(`📝 Prompt: ${prompt.substring(0, 100)}${prompt.length > 100 ? '...' : ''}`, 'info');
+            addLogEntry(`⚙️ Config: ${diffusionSteps} diffusion steps, ${numReplicas} replicas`, 'info');
             
             const payload = {
                 prompts: [prompt],
@@ -571,11 +797,54 @@
                 }
             };
             
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 600000); // 10 minute timeout
+            // Store the controller for potential cancellation
+            currentController = new AbortController();
+            const controller = currentController;
+            
+            // Enhanced timeout logic with progress-based extensions
+            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+            const isChrome = /chrome/i.test(navigator.userAgent);
+            
+            // Base timeouts
+            let timeoutMs = 600000; // 10 minutes default
+            if (isSafari) {
+                timeoutMs = 900000; // 15 minutes for Safari
+            } else if (isChrome) {
+                timeoutMs = 900000; // 15 minutes for Chrome (more generous)
+            }
+            
+            // Extend timeout based on diffusion steps and replicas
+            const timeoutDiffusionSteps = parseInt(document.getElementById('diffusionSteps').value) || 512;
+            const timeoutNumReplicas = parseInt(document.getElementById('numReplicas').value) || 1;
+            
+            // Add extra time based on complexity
+            const complexityMultiplier = (timeoutDiffusionSteps / 512) * (timeoutNumReplicas / 1);
+            const extraTime = Math.min(300000, complexityMultiplier * 60000); // Max 5 minutes extra
+            timeoutMs += extraTime;
+            
+            addLogEntry(`⏱️ Timeout set to ${Math.round(timeoutMs/1000/60)} minutes for ${timeoutDiffusionSteps} steps × ${timeoutNumReplicas} replicas`, 'info');
+            
+            const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+            
+            // Start progress streaming
+            startProgressStream();
+            
+            // Keep-alive mechanism to prevent browser timeouts
+            currentKeepAliveInterval = setInterval(() => {
+                addLogEntry('💓 Keep-alive ping to prevent browser timeout...', 'info');
+                console.log('Keep-alive ping sent');
+            }, 60000); // Every 60 seconds (less frequent to reduce spam)
+            
+            // Clean up keep-alive on completion
+            const cleanupKeepAlive = () => {
+                if (currentKeepAliveInterval) {
+                    clearInterval(currentKeepAliveInterval);
+                    currentKeepAliveInterval = null;
+                }
+            };
             
             // Add progress updates
-            addProgressLog('📡 Sending request to BioM3 service...', 'info');
+            addLogEntry('📡 Sending request to BioM3 service...', 'info');
             
             fetch(`${SERVICE_URL}/predict`, {
                 method: 'POST',
@@ -589,7 +858,7 @@
             .then(response => {
                 clearTimeout(timeoutId);
                 console.log('Prediction response status:', response.status);
-                addProgressLog(`📡 Response received: ${response.status} ${response.statusText}`, 'info');
+                addLogEntry(`📡 Response received: ${response.status} ${response.statusText}`, 'info');
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
@@ -597,17 +866,30 @@
             })
             .then(data => {
                 console.log('Prediction data:', data);
-                addProgressLog('✅ BioM3 pipeline completed successfully!', 'success');
-                addProgressLog(`📊 Generated ${data.processed_prompts} protein sequence(s)`, 'success');
+                cleanupKeepAlive(); // Clean up keep-alive
+                
+                // Close the progress stream
+                if (currentEventSource) {
+                    currentEventSource.close();
+                    currentEventSource = null;
+                }
+                
+                addLogEntry('✅ BioM3 pipeline completed successfully!', 'success');
+                isGenerating = false; // set the isGenerating flag to false the indicate that the generation is complete
+                addLogEntry(`📊 Generated sequence(s) corresponding to ${data.processed_prompts} protein(s)`, 'success');
+                
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('runBtn').disabled = false;
+                document.getElementById('stopBtn').style.display = 'none';
                 displayResults(data);
             })
             .catch(error => {
                 console.error('Prediction error:', error);
-                addProgressLog(`❌ Error: ${error.message}`, 'error');
+                cleanupKeepAlive(); // Clean up keep-alive
+                addLogEntry(`❌ Error: ${error.message}`, 'error');
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('runBtn').disabled = false;
+                document.getElementById('stopBtn').style.display = 'none';
                 
                 let errorMessage = error.message;
                 let detailedMessage = '';
@@ -615,7 +897,7 @@
                 // Handle specific error cases
                 if (error.name === 'AbortError') {
                     errorMessage = 'Request timed out';
-                    addProgressLog('⏰ Request timed out after 10 minutes', 'error');
+                    addLogEntry('⏰ Request timed out after 10 minutes', 'error');
                     detailedMessage = `
                         <p><strong>Request timed out after 10 minutes.</strong></p>
                         <p>This is normal for the first request as models load. Try again in 1-2 minutes.</p>
@@ -628,7 +910,7 @@
                         </ul>
                     `;
                 } else if (error.message.includes('Service Unavailable')) {
-                    addProgressLog('🔄 Service temporarily unavailable - models loading...', 'info');
+                    addLogEntry('🔄 Service temporarily unavailable - models loading...', 'info');
                     errorMessage = 'Service temporarily unavailable';
                     detailedMessage = `
                         <p><strong>This is normal for the first request!</strong></p>
@@ -678,7 +960,7 @@
             const resultsDiv = document.getElementById('results');
             
             if (data.status === 'success') {
-                let html = '<div class="success">✅ Prediction completed successfully!</div>';
+                let html = '<div class="success">✅ Sequence generation completed successfully!</div>';
                 
                 if (data.results && data.results.stage3_sequences) {
                     const sequences = data.results.stage3_sequences[0];
@@ -697,16 +979,370 @@
                     html += '</div>';
                 }
                 
+                // Handle structure data if available
+                if (data.results && data.results.structures && Array.isArray(data.results.structures) && data.results.structures.length > 0) {
+                    html += '<h3>🏗️ Protein Structures Generated:</h3>';
+                    html += '<div class="results-content">';
+                    html += `<p>✅ Successfully predicted ${data.results.structures.length} protein structure(s)</p>`;
+                    html += '<p>Use the Structure Visualization panel to view 3D structures with pLDDT confidence scores.</p>';
+                    html += '</div>';
+                    
+                    // Load structures into the viewer
+                    loadStructuresFromResponse(data.results);
+                } else {
+                    html += '<h3>🏗️ Protein Structures:</h3>';
+                    html += '<div class="results-content">';
+                    html += '<p>⚠️ No structures were generated. This may be due to API limitations of ESMFold. Please try with smaller diffusion steps.</p>';
+                    html += '</div>';
+                }
+                
                 resultsDiv.innerHTML = html;
             } else {
-                showError('Prediction failed. Please try again.');
+                showError('Sequence generation failed. Please try again.');
             }
         }
 
+        function stopPrediction() {
+            addLogEntry('🛑 Stopping BioM3 pipeline...', 'info');
+            
+            // Abort the current fetch request
+            if (currentController) {
+                currentController.abort();
+                currentController = null;
+            }
+            
+            // Close the progress stream
+            if (currentEventSource) {
+                currentEventSource.close();
+                currentEventSource = null;
+            }
+            
+            // Clear keep-alive interval
+            if (currentKeepAliveInterval) {
+                clearInterval(currentKeepAliveInterval);
+                currentKeepAliveInterval = null;
+            }
+
+            isGenerating = false; // set the isGenerating flag to false the indicate that the generation is stopped
+            
+            // Reset UI
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('runBtn').disabled = false;
+            document.getElementById('stopBtn').style.display = 'none';
+            
+            addLogEntry('⏹️ Generation stopped by user', 'error');
+            
+            // Send stop request to server
+            fetch(`${SERVICE_URL}/stop`, {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).catch(error => {
+                console.log('Stop request sent to server');
+            });
+        }
+        
+        function printProgress(mode = 'print') {
+            // Create a new window for printing
+            const printWindow = window.open('', '_blank');
+            const progressLog = document.querySelector('.progress-log');
+            const resultsDiv = document.getElementById('results');
+            
+            if (!progressLog) {
+                alert('No progress log to print');
+                return;
+            }
+            
+            // Get current timestamp
+            const now = new Date();
+            const timestamp = now.toLocaleString();
+            
+            // Create print-friendly content
+            const printContent = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>BioM3 Progress Report</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        .header { text-align: center; margin-bottom: 30px; }
+                        .header h1 { color: #667eea; margin: 0; }
+                        .header p { color: #666; margin: 5px 0; }
+                        .progress-section { margin: 20px 0; }
+                        .progress-log { 
+                            background: #f8f9fa; 
+                            border: 1px solid #ddd; 
+                            padding: 15px; 
+                            border-radius: 5px;
+                            font-family: 'Courier New', monospace;
+                            font-size: 12px;
+                            white-space: pre-wrap;
+                            line-height: 1.4;
+                            max-height: none;
+                        }
+                        .results-section { margin: 20px 0; }
+                        .results-content { 
+                            background: #f8f9fa; 
+                            border: 1px solid #ddd; 
+                            padding: 15px; 
+                            border-radius: 5px;
+                            font-family: 'Courier New', monospace;
+                            font-size: 12px;
+                            white-space: pre-wrap;
+                        }
+                        @media print {
+                            body { margin: 10px; }
+                            .no-print { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>🧬 BioM3 Progress Report</h1>
+                        <p>Generated on: ${timestamp}</p>
+                        <p>Service URL: ${SERVICE_URL}</p>
+                    </div>
+                    
+                    <div class="progress-section">
+                        <h2>📊 Progress Log</h2>
+                        <div class="progress-log">${progressLog.innerHTML}</div>
+                    </div>
+                    
+                    ${resultsDiv.innerHTML ? `
+                    <div class="results-section">
+                        <h2>🎯 Results</h2>
+                        <div class="results-content">${resultsDiv.innerHTML}</div>
+                    </div>
+                    ` : ''}
+                    
+                    <div class="no-print" style="margin-top: 30px; text-align: center;">
+                        <button onclick="window.print()">🖨️ Print Report</button>
+                        <button onclick="window.close()">❌ Close</button>
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+            
+            // Auto-print or save as PDF after a short delay
+            setTimeout(() => {
+                if (mode === 'pdf') {
+                    // For PDF, we'll use the browser's "Save as PDF" option
+                    printWindow.print();
+                } else {
+                    // For regular printing
+                    printWindow.print();
+                }
+            }, 500);
+        }
+        
         function showError(message) {
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = `<div class="error">❌ ${message}</div>`;
         }
+        
+        // Structure visualization variables
+        let stage = null;
+        let currentStructure = null;
+        let structures = [];
+        
+        // Initialize NGL viewer
+        function initStructureViewer() {
+            const container = document.getElementById('structureViewer');
+            if (!container) return;
+            
+            // Clear container
+            container.innerHTML = '';
+            
+            // Create NGL stage
+            stage = new NGL.Stage(container);
+            stage.setParameters({
+                backgroundColor: 'white'
+            });
+            
+            console.log('NGL viewer initialized');
+        }
+        
+        // Load structure from PDB data
+        function loadStructure() {
+            const selector = document.getElementById('structureSelector');
+            const selectedIndex = selector.value;
+            
+            if (!selectedIndex || !structures[selectedIndex]) {
+                console.log('No structure selected');
+                return;
+            }
+            
+            const structure = structures[selectedIndex];
+            console.log('Loading structure:', structure);
+            
+            // Clear previous structure
+            stage.removeAllComponents();
+            
+            // Load new structure
+            stage.loadFile(new Blob([structure.pdbData], {type: 'text/plain'}), {ext: 'pdb'})
+                .then(function(component) {
+                    currentStructure = component;
+                    
+                    // Set default representation
+                    component.addRepresentation('ribbon', {
+                        color: 'chainid'
+                    });
+                    
+                    // Auto-fit view
+                    stage.autoView();
+                    
+                    // Update structure info
+                    updateStructureInfo(structure);
+                    
+                    console.log('Structure loaded successfully');
+                })
+                .catch(function(error) {
+                    console.error('Error loading structure:', error);
+                    showError('Failed to load structure');
+                });
+        }
+        
+        // Set viewing mode
+        function setViewMode(mode) {
+            if (!currentStructure) return;
+            
+            // Remove all representations
+            currentStructure.removeAllRepresentations();
+            
+            switch(mode) {
+                case 'ribbon':
+                    currentStructure.addRepresentation('ribbon', {
+                        color: 'chainid'
+                    });
+                    break;
+                case 'surface':
+                    currentStructure.addRepresentation('surface', {
+                        color: 'chainid',
+                        opacity: 0.8
+                    });
+                    break;
+                case 'ballstick':
+                    currentStructure.addRepresentation('ball+stick', {
+                        color: 'element'
+                    });
+                    break;
+                case 'plddt':
+                    // Color by pLDDT scores (B-factor column)
+                    currentStructure.addRepresentation('ribbon', {
+                        color: 'b-factor',
+                        colorScale: 'RdYlBu',
+                        colorReverse: true
+                    });
+                    break;
+            }
+        }
+        
+        // Update structure information
+        function updateStructureInfo(structure) {
+            document.getElementById('sequenceInfo').textContent = structure.sequence || 'N/A';
+            document.getElementById('plddtScore').textContent = structure.avgPlddt || 'N/A';
+            document.getElementById('qualityInfo').textContent = structure.quality || 'N/A';
+        }
+        
+        // Parse PDB file and extract information
+        function parsePDBData(pdbData) {
+            const lines = pdbData.split('\n');
+            let sequence = '';
+            let plddtScores = [];
+            
+            for (const line of lines) {
+                if (line.startsWith('ATOM')) {
+                    // Extract sequence from ATOM records
+                    const residue = line.substring(17, 20).trim();
+                    const resSeq = parseInt(line.substring(22, 26));
+                    
+                    // Only add each residue once
+                    if (resSeq > sequence.length) {
+                        sequence += residue;
+                    }
+                    
+                    // Extract pLDDT score from B-factor column
+                    const bFactor = parseFloat(line.substring(60, 66));
+                    if (!isNaN(bFactor)) {
+                        plddtScores.push(bFactor);
+                    }
+                }
+            }
+            
+            // Calculate average pLDDT
+            const avgPlddt = plddtScores.length > 0 ? 
+                (plddtScores.reduce((a, b) => a + b, 0) / plddtScores.length).toFixed(2) : 'N/A';
+            
+            // Determine quality based on pLDDT
+            let quality = 'Unknown';
+            if (avgPlddt !== 'N/A') {
+                const score = parseFloat(avgPlddt);
+                if (score >= 0.9) quality = 'Very High';
+                else if (score >= 0.7) quality = 'High';
+                else if (score >= 0.5) quality = 'Medium';
+                else if (score >= 0.3) quality = 'Low';
+                else quality = 'Very Low';
+            }
+            
+            return {
+                sequence: sequence,
+                avgPlddt: avgPlddt,
+                quality: quality
+            };
+        }
+        
+        // Load structures from server response
+        function loadStructuresFromResponse(response) {
+            if (!response.structures || !Array.isArray(response.structures)) {
+                console.log('No structures in response');
+                return;
+            }
+            
+            structures = [];
+            const selector = document.getElementById('structureSelector');
+            selector.innerHTML = '<option value="">Select a structure...</option>';
+            
+            response.structures.forEach((structureData, index) => {
+                const info = parsePDBData(structureData);
+                
+                structures.push({
+                    pdbData: structureData,
+                    sequence: info.sequence,
+                    avgPlddt: info.avgPlddt,
+                    quality: info.quality,
+                    index: index + 1
+                });
+                
+                // Add to selector
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `Structure ${index + 1} (${info.sequence.length} aa, pLDDT: ${info.avgPlddt})`;
+                selector.appendChild(option);
+            });
+            
+            console.log(`Loaded ${structures.length} structures`);
+            
+            // Initialize viewer if not already done
+            if (!stage) {
+                initStructureViewer();
+            }
+            
+            // Load first structure by default
+            if (structures.length > 0) {
+                selector.value = '0';
+                loadStructure();
+            }
+        }
+        
+        // Initialize structure viewer when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initStructureViewer();
+        });
     </script>
 </body>
 </html> 
